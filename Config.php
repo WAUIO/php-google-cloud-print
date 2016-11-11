@@ -58,5 +58,3 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         'accesstoken_url'   	=> 'https://accounts.google.com/o/oauth2/token',
         'refreshtoken_url'      => 'https://www.googleapis.com/oauth2/v3/token'
     );
-    
-?>

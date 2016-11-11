@@ -1,0 +1,29 @@
+{
+  "name": "wauio/php-google-cloud-print",
+  "type": "package",
+  "description": "Google cloud print forked from https://github.com/yasirsiddiqui/php-google-cloud-print",
+  "version": "1.0.0",
+  "keywords": [
+    "google",
+    "cloud",
+    "print"
+  ],
+  "license": "All rights Reserved",
+  "authors": [
+    {
+      "name": "Yasir Siddiqui",
+      "email": "y.hallian@gmail.com"
+    },
+    {
+      "name": "Mickael"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GCPrint\\": "Libraries/"
+    },
+    "files": [
+      "library/Wau/Utilities/functions.inc.php"
+    ]
+  }
+}

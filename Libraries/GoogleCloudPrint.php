@@ -87,7 +87,10 @@ class GoogleCloudPrint
 
     public function getAccessTokenByRefreshToken ($url, $post_fields)
     {
+//        var_dump($post_fields);
+
         $responseObj = $this->getAccessToken($url, $post_fields);
+        var_dump($responseObj);
         return $responseObj->access_token;
     }
 
@@ -103,9 +106,9 @@ class GoogleCloudPrint
      *
      * return http response
      */
-    public function getAccessToken ($url, array $post_fields)
+    public function getAccessToken ($url, $post_fields)
     {
-
+        $this->httpRequest->setHeaders(["Content-Type: application/x-www-form-urlencoded"]);
         $this->httpRequest->setUrl($url);
         $this->httpRequest->setPostData($post_fields);
         $this->httpRequest->send();

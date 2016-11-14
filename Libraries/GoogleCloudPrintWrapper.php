@@ -17,26 +17,26 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
      */
     protected $configs = [
         'redirect' => [
-            'client_id'     => 'YOUR-CLIENT-ID',
-            'redirect_uri'  => 'http://yourdomain.com/oAuthRedirect.php',
+            'client_id'     => '1066080088104-cs626170n6vstpcsc82qoivbc6h901al.apps.googleusercontent.com',
+            'redirect_uri'  => 'http://localhost/wau/php-google-cloud-print/test.php',
             'response_type' => 'code',
             'scope'         => 'https://www.googleapis.com/auth/cloudprint',
         ],
         'auth'     => [
             'code'          => '',
-            'client_id'     => 'YOUR-CLIENT-ID',
-            'client_secret' => 'YOUR-CLIENT-SECRET',
-            'redirect_uri'  => 'http://yourdomain.com/oAuthRedirect.php',
+            'client_id'     => '1066080088104-cs626170n6vstpcsc82qoivbc6h901al.apps.googleusercontent.com',
+            'client_secret' => 'irAutqX24xX7et1yEYOtbFIb',
+            'redirect_uri'  => 'http://localhost/wau/php-google-cloud-print/test.php',
             "grant_type"    => "authorization_code"
         ],
         'offline'  => [
             'access_type' => 'offline'
         ],
         'refresh'  => [
-            'refresh_token' => "",
+            'grant_type'    => "refresh_token",
+            'refresh_token' => "1/cF3V20VQq1gDV4R94ygVfsan_VLncNUMou91PMrjNNY",
             'client_id'     => ""/*$this->configs['auth']['client_id']*/,
             'client_secret' => ""/*$this->configs['auth']['client_secret']*/,
-            'grant_type'    => "refresh_token",
         ],
         "url"      => [
             'authorization_url' => 'https://accounts.google.com/o/oauth2/auth',
@@ -50,19 +50,23 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         //set the first two values that are missing
         $this->setConf("refresh.client_id", $this->getConf("auth.client_id"));
         $this->setConf("refresh.client_secret", $this->getConf("auth.client_secret"));
-
+//        var_dump($this->getConf("refresh.refresh_token"));
         //merge with users configs
-        $this->configs = $this->bulkMergeConfs($configs);
+//        $this->configs = $this->bulkMergeConfs($configs);
 
-        if (isset($_GET["code"]) && is_null($this->getConf("refresh.refresh_token"))) {
+        if (isset($_GET["code"]) && (is_null($this->getConf("refresh.refresh_token")) || $this->getConf("refresh.refresh_token") == "")) {
+
+            $this->setConf("auth.code", $_GET['code']);
+
             parent::__construct();
-            $accessToken = parent::getAccessToken($this->getConf("url.accesstoken_url"), $this->getConf("auth"));
+            $accessToken = parent::getAccessToken($this->getConf("url.accesstoken_url"), http_build_query($this->getConf("auth")));
             echo "your refreshtoken is $accessToken->refresh_token";
             exit();
         }
 
         //check if refresh token is set so that we can redirect auth or just start to work
-        if (is_null($this->getConf("refresh.refresh_token", null))) {
+        if (is_null($this->getConf("refresh.refresh_token", null)) || $this->getConf("refresh.refresh_token") == "") {
+
             header("Location: ".$this->getConf("url.authorization_url", "https://accounts.google.com/o/oauth2/auth")."?".http_build_query(array_merge($this->getConf("redirect", []), $this->getConf("offline", []))));
 
         } else {

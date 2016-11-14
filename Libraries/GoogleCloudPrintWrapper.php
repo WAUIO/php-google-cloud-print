@@ -8,7 +8,7 @@
 namespace GCPrint;
 
 
-class GoogleCloudPrintWrapper
+class GoogleCloudPrintWrapper extends GoogleCloudPrint
 {
     /**
      * All configs needed for the gc printer class
@@ -47,12 +47,48 @@ class GoogleCloudPrintWrapper
 
     public function __construct ($configs = [])
     {
+        //set the first two values that are missing
+        $this->setConf("refresh.client_id", $this->getConf("auth.client_id"));
+        $this->setConf("refresh.client_secret", $this->getConf("auth.client_secret"));
+
+        //merge with users configs
         $this->configs = $this->bulkMergeConfs($configs);
+
+        if (isset($_GET["code"]) && is_null($this->getConf("refresh.refresh_token"))) {
+            parent::__construct();
+            $accessToken = parent::getAccessToken($this->getConf("url.accesstoken_url"), $this->getConf("auth"));
+            echo "your refreshtoken is $accessToken->refresh_token";
+            exit();
+        }
+
+        //check if refresh token is set so that we can redirect auth or just start to work
+        if (is_null($this->getConf("refresh.refresh_token", null))) {
+            header("Location: ".$this->getConf("url.authorization_url", "https://accounts.google.com/o/oauth2/auth")."?".http_build_query(array_merge($this->getConf("redirect", []), $this->getConf("offline", []))));
+
+        } else {
+
+            //construct parent
+            parent::__construct();
+
+            $token = parent::getAccessTokenByRefreshToken($this->getConf("url.refreshtoken_url", null),  http_build_query($this->getConf("refresh")));
+
+            parent::setAuthToken($token);
+
+        }
     }
 
     protected function bulkMergeConfs (array $configs)
     {
-        
+        foreach ($configs as $key => $config) {
+
+            if (array_key_exists($key, $this->configs)) {
+                foreach ($config as $innerKey => $inner_conf) {
+                    $this->setConf($key.".".$innerKey, $inner_conf);
+                }
+            } else {
+                $this->setConf($key, $config);
+            }
+        }
 
         return [];
     }

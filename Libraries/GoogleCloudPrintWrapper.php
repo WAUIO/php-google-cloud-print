@@ -50,9 +50,8 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         //set the first two values that are missing
         $this->setConf("refresh.client_id", $this->getConf("auth.client_id"));
         $this->setConf("refresh.client_secret", $this->getConf("auth.client_secret"));
-//        var_dump($this->getConf("refresh.refresh_token"));
         //merge with users configs
-//        $this->configs = $this->bulkMergeConfs($configs);
+        $this->bulkMergeConfs($configs);
 
         if (isset($_GET["code"]) && (is_null($this->getConf("refresh.refresh_token")) || $this->getConf("refresh.refresh_token") == "")) {
 

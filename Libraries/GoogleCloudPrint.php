@@ -87,10 +87,7 @@ class GoogleCloudPrint
 
     public function getAccessTokenByRefreshToken ($url, $post_fields)
     {
-//        var_dump($post_fields);
-
         $responseObj = $this->getAccessToken($url, $post_fields);
-        var_dump($responseObj);
         return $responseObj->access_token;
     }
 

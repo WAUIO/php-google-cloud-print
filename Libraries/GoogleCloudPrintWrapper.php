@@ -26,16 +26,16 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
      */
     protected $configs = [
         'redirect' => [
-            'client_id'     => '1066080088104-cs626170n6vstpcsc82qoivbc6h901al.apps.googleusercontent.com',
-            'redirect_uri'  => 'http://localhost/wau/php-google-cloud-print/test.php',
+            'client_id'     => '',
+            'redirect_uri'  => '',
             'response_type' => 'code',
             'scope'         => 'https://www.googleapis.com/auth/cloudprint',
         ],
         'auth'     => [
             'code'          => '',
-            'client_id'     => '1066080088104-cs626170n6vstpcsc82qoivbc6h901al.apps.googleusercontent.com',
-            'client_secret' => 'irAutqX24xX7et1yEYOtbFIb',
-            'redirect_uri'  => 'http://localhost/wau/php-google-cloud-print/test.php',
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect_uri'  => '',
             "grant_type"    => "authorization_code"
         ],
         'offline'  => [
@@ -43,9 +43,9 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         ],
         'refresh'  => [
             'grant_type'    => "refresh_token",
-            'refresh_token' => "1/cF3V20VQq1gDV4R94ygVfsan_VLncNUMou91PMrjNNY",
-            'client_id'     => ""/*$this->configs['auth']['client_id']*/,
-            'client_secret' => ""/*$this->configs['auth']['client_secret']*/,
+            'refresh_token' => "",
+            'client_id'     => "",
+            'client_secret' => "",
         ],
         "url"      => [
             'authorization_url' => 'https://accounts.google.com/o/oauth2/auth',

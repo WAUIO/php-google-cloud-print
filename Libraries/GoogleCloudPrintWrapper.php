@@ -10,6 +10,15 @@ namespace GCPrint;
 
 class GoogleCloudPrintWrapper extends GoogleCloudPrint
 {
+
+    /**
+     * Printers ids
+     *
+     * @var string
+     */
+    public static $ZDESIGNER_PRINTER_ID = "93abebea-9460-6dda-4baf-dd106124f11f";
+    public static $HPPRINTER_PRINTER_ID = "a989506b-bbce-22d2-11b8-38e98de882f1";
+
     /**
      * All configs needed for the gc printer class
      *
@@ -80,6 +89,13 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         }
     }
 
+    /**
+     * Merge the configurations
+     * What is defined in parameters has higher priority
+     *
+     * @param array $configs
+     * @return array
+     */
     protected function bulkMergeConfs (array $configs)
     {
         foreach ($configs as $key => $config) {
@@ -96,6 +112,13 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         return [];
     }
 
+    /**
+     * Set the configurations in dot notation
+     * Only work two levels
+     *
+     * @param $pathInDotNotation
+     * @param $value
+     */
     public function setConf ($pathInDotNotation, $value)
     {
         //breakdown dot notation
@@ -110,6 +133,13 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
         $destination = $value;
     }
 
+    /**
+     * Get the configurations from dot notation
+     *
+     * @param $pathInDotNotation
+     * @param null $default
+     * @return array|mixed|null
+     */
     public function getConf ($pathInDotNotation, $default = null)
     {
         //breakdown dot notation

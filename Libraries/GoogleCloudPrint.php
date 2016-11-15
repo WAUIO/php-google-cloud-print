@@ -114,6 +114,44 @@ class GoogleCloudPrint
     }
 
     /**
+     * Used to check the printer status and if it can print now
+     *
+     * @param $printerId
+     * @return array
+     */
+    protected function checkPrinter ($printerId)
+    {
+        //try to fetch all printers first
+        try {
+            $allPrinters = $this->getPrinters();
+        } catch (\Exception $e) {
+            return ["got" => false, "message" => "Could not get any printer sorry : ".$e->getMessage()];
+        }
+
+        //only filter the printer with given id
+        $myPrinter = array_filter($allPrinters, function ($val) use ($printerId) {
+            if ($val['id'] == $printerId)
+                return true;
+            else
+                return false;
+        });
+
+        //could not get the printer with given id
+        if (empty($myPrinter))
+            return ["got" => false, "message" => "Could not get printer with id ".$printerId];
+
+        //just for convenience
+        $myPrinter = $myPrinter [0];
+
+        //check if printer is not online
+        if ($myPrinter['connectionStatus'] != "ONLINE")
+            return ["got" => false, "message" => "Got the printer ".$myPrinter['name']. " but its status is currently ".$myPrinter['connectionStatus']. ". Please make sure it is online before you try to print again."];
+
+        //return true if all is OK
+        return ["got" => true, "message" => "Got printer ".$myPrinter['name']];
+    }
+
+    /**
      * Function getPrinters
      *
      * Get all the printers added by user on Google Cloud Print.
@@ -177,6 +215,15 @@ class GoogleCloudPrint
             // Printer id is not there so throw exception
             throw new \Exception("Please provide printer ID");
         }
+
+        //check if the printer is ready to print
+        list ($gotPrinter, $fetchPrinterMessage) = $this->checkPrinter($printerid);
+
+        if (!$gotPrinter) {
+            return array('status' => false, 'errorcode' => '', 'errormessage' => $fetchPrinterMessage, 'id' => 0);
+        }
+
+
         // Open the file which needs to be print
         $handle = fopen($filepath, "rb");
         if (!$handle) {

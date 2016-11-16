@@ -125,30 +125,30 @@ class GoogleCloudPrint
         try {
             $allPrinters = $this->getPrinters();
         } catch (\Exception $e) {
-            return ["got" => false, "message" => "Could not get any printer sorry : ".$e->getMessage()];
+            return [false, "Could not get any printer sorry : ".$e->getMessage()];
         }
 
         //only filter the printer with given id
-        $myPrinter = array_filter($allPrinters, function ($val) use ($printerId) {
-            if ($val['id'] == $printerId)
+        $myPrinter = array_values(array_filter($allPrinters, function ($val) use ($printerId) {
+            if (trim($val['id']) == trim($printerId))
                 return true;
             else
                 return false;
-        });
+        }));
 
         //could not get the printer with given id
         if (empty($myPrinter))
-            return ["got" => false, "message" => "Could not get printer with id ".$printerId];
+            return [false,"Could not get printer with id ".$printerId];
 
         //just for convenience
         $myPrinter = $myPrinter [0];
 
         //check if printer is not online
         if ($myPrinter['connectionStatus'] != "ONLINE")
-            return ["got" => false, "message" => "Got the printer ".$myPrinter['name']. " but its status is currently ".$myPrinter['connectionStatus']. ". Please make sure it is online before you try to print again."];
+            return [false,"Got the printer ".$myPrinter['name']. " but its status is currently ".$myPrinter['connectionStatus']. ". Please make sure it is online before you try to print again."];
 
         //return true if all is OK
-        return ["got" => true, "message" => "Got printer ".$myPrinter['name']];
+        return [true, "Got printer ".$myPrinter['name']];
     }
 
     /**

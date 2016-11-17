@@ -32,6 +32,7 @@ class GoogleCloudPrint
 {
 
     const PRINTERS_SEARCH_URL = "https://www.google.com/cloudprint/search";
+    const PRINTER_INFO_URL = "https://www.google.com/cloudprint/printer";
     const PRINT_URL = "https://www.google.com/cloudprint/submit";
     const JOBS_URL = "https://www.google.com/cloudprint/jobs";
 
@@ -202,7 +203,7 @@ class GoogleCloudPrint
      *
      * @param Content Type $contenttype // File content type e.g. application/pdf, image/png for pdf and images
      */
-    public function sendPrintToPrinter ($printerid, $printjobtitle, $filepath, $contenttype)
+    public function sendPrintToPrinter ($printerid, $printjobtitle, $filepath, $contenttype, $printSettings = '')
     {
 
         // Check if we have auth token
@@ -243,6 +244,10 @@ class GoogleCloudPrint
             'content'                 => base64_encode($contents), // encode file content as base64
             'contentType'             => $contenttype
         );
+
+        if ($printSettings != '')
+            $post_fields ["ticket"] = $printSettings;
+
         // Prepare authorization headers
         $authheaders = array(
             "Authorization: Bearer " . $this->authtoken
@@ -312,5 +317,60 @@ class GoogleCloudPrint
             }
         }
         return $printers;
+    }
+
+    public function getPrinterInfo($printerid, $use_cdd = false) {
+
+        // Check if we have auth token
+        if(empty($this->authtoken)) {
+            // We don't have auth token so throw exception
+            throw new \Exception("Please first login to Google");
+        }
+
+        // Prepare auth headers with auth token
+        $authheaders = array(
+            "Authorization: Bearer " .$this->authtoken
+        );
+
+        $post_fields = array(
+            'printerid' => $printerid,
+            'use_cdd' => $use_cdd
+        );
+
+        $this->httpRequest->setUrl(self::PRINTER_INFO_URL);
+        $this->httpRequest->setPostData($post_fields);
+        $this->httpRequest->setHeaders($authheaders);
+        $this->httpRequest->send();
+        $responsedata = $this->httpRequest->getResponse();
+        // Make Http call to get printers added by user to Google Cloud Print
+        $printer_infos = json_decode($responsedata);
+        // Check if we have printers?
+        if(is_null($printer_infos)) {
+            // We dont have printers so return blank array
+            return "OH OH! Nothing here!";
+        }
+        else {
+            // We have printers so returns printers as array
+            return $this->arrayCastRecursive($printer_infos);
+        }
+
+    }
+
+    private function arrayCastRecursive($array)
+    {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    $array[$key] = $this->arrayCastRecursive($value);
+                }
+                if ($value instanceof \stdClass) {
+                    $array[$key] = $this->arrayCastRecursive((array)$value);
+                }
+            }
+        }
+        if ($array instanceof \stdClass) {
+            return $this->arrayCastRecursive((array)$array);
+        }
+        return $array;
     }
 }

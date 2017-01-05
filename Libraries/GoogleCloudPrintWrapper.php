@@ -17,7 +17,7 @@ class GoogleCloudPrintWrapper extends GoogleCloudPrint
      * @var string
      */
     public static $ZDESIGNER_PRINTER_ID = "93abebea-9460-6dda-4baf-dd106124f11f";
-    public static $HPPRINTER_PRINTER_ID = "a989506b-bbce-22d2-11b8-38e98de882f1";
+    public static $HPPRINTER_PRINTER_ID = "b19e6d3e-fc4f-1bdc-a1e8-9f0c6ea26afd";
 
     /**
      * All configs needed for the gc printer class
